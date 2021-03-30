@@ -1,0 +1,28 @@
+#appname
+spring:
+  application:
+    name: item-service
+  cloud:
+    config:
+      override-none: true
+  
+
+#当前服务器端口
+server:
+  port: 8001
+
+
+#配置Eureka注册中心的连接信息，本消费
+eureka:
+  client:
+    service-url:
+      #部署的具体地点，由云服务商提供，本机地址只能用defaultZone属性
+      defaultZone: http://eureka1:2001/eureka, http://eureka2:2002/eureka
+
+
+
+#在BootDashBoard上右键open config，配置运行参数
+#java -jar表示使用java虚拟机执行jar文件
+#item.jar是本服务打包后的名称
+#--server.port=8001命令行，是给springboot主程序的启动参数，表示在该端口运行本jar包，
+#该命令行的优先级比yml的配置高，会覆盖yml配置的端口

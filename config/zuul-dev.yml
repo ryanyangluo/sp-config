@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: zuul
+  cloud:
+    config:
+      override-none: true
+
+server:
+  port: 3001
+  
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka1:2001/eureka, http://eureka2:2002/eureka
+
+#zuul默认配置下会自动读取服务id，把服务id作为子路径映射，例如：
+#id为item-service的服务，会自动映射到/item-service/** 的路径
+#但最好还是在配置文件里手动配置好
+zuul:
+  routes:
+    item-service: /item-service/**
+    user-service: /user-service/**
+    order-service: /order-service/**    
+  #zuul已经集成了ribbon，默认启用负载均衡
+  #zuul不推荐使用重试
+  #如需要启用重试，需要进行配置如下
+  retryable: true
+
+#通用配置，对zuul代理的所有服务生效
+ribbon:
+  MaxAutoRetries: 1
+
+#个别配置，对指定的服务生效
+item-service:
+  ribbon:
+    MaxAutoRetiresNextServer: 2
+  
+#可以在下列配置中设置hystrix超时时间测试降级代码
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2000
+
+#zuul包含了actuator的依赖，这里配置暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+        
+
